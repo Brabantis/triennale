@@ -40,26 +40,6 @@ def main(args):
     print("Model compiled. Dataset read. Training.")
     # Likely too few epochs, but the loss diminishes very slowly.
     model.fit(X_train, y_train, nb_epoch=32, batch_size=64, verbose=args.verb) 
-    """
-    # I did something wrong here, that caused precision and recall to drop.
-    losses, accs = [], []
-    batch_size = 64
-    num_epochs = 32
-    for epoch in range(num_epochs):
-        print("Starting epoch " + str(epoch+1))
-        for count in range(0, len(X_train), 64):
-            X_batch = X_train[count : count + batch_size]
-            y_batch = y_train[count : count + batch_size]
-            loss, acc = model.train_on_batch(X_batch, y_batch, accuracy=True)
-            losses.append(loss)
-            accs.append(acc)
-        L=numpy.array(losses)
-        A=numpy.array(accs)
-        print("End of epoch " + str(epoch+1) + " - Loss: " + str(L.mean()) + ", Acc: " + str(A.mean()))
-        if not os.path.exists(args.destfile):
-            os.makedirs(args.destfile)
-        model.save_weights(args.destfile + '/weights.h5', overwrite=True)
-    """
     print("Training is completed!")
     json_string=model.to_json()
     if not os.path.exists(args.destfile):
