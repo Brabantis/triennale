@@ -8,8 +8,6 @@ import numpy
 import argparse
 import os
 
-from bcfind.util import bot_alert as ba
-
 # 2197 is the number of points in a training patch
 def main(args):
     # The structure here is predefined
@@ -40,12 +38,6 @@ def main(args):
     h5file.close()
 
     print("Model compiled. Dataset read. Training.")
-    if args.ID is not None:
-        try:
-            ba.send_message(args.ID, "Starting training")
-        except:
-            print("Could not send message!")
-
     # Likely too few epochs, but the loss diminishes very slowly.
     model.fit(X_train, y_train, nb_epoch=32, batch_size=64, verbose=args.verb) 
     """
@@ -69,11 +61,6 @@ def main(args):
         model.save_weights(args.destfile + '/weights.h5', overwrite=True)
     """
     print("Training is completed!")
-    if args.ID is not None:
-        try:
-            ba.send_message(args.ID, "Training is completed!")
-        except:
-            print("Could not send update message")
     json_string=model.to_json()
     if not os.path.exists(args.destfile):
         os.makedirs(args.destfile)
@@ -82,12 +69,6 @@ def main(args):
 
     print("Model saved to " + args.destfile)
     
-    if args.ID is not None:
-        try:
-            ba.send_message(args.ID, "Model saved to " + args.destfile)
-        except:
-            print("Could not send update message")
-
 def get_parser():
     parser = argparse.ArgumentParser(description="""Generates a neural net, trains it on a dataset, then saves the model""",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -97,7 +78,6 @@ def get_parser():
     parser.add_argument('destfile', type=str,
                         help='Identifier for the saved model (without file extension)')
     parser.add_argument('-v', '--verbose', dest = 'verb', type=int, default=1, help='0 for no log, 1 for progress bar, 2 for log each epoch')
-    parser.add_argument('-t', '--telegram', dest='ID', type=str, default=None, help='addressbook ID for getting updates via Telegram')
     return parser
 
 if __name__ == '__main__':
